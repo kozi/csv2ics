@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * csv2ics
+ *
+ * Copyright (c) 2014 Martin Kozianka <kozianka.de>
+ *
+ * @package Csv2ics
+ * @link    https://csv2ics.kozianka.de
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ */
+
 namespace Csv2ics;
 
 require 'vendor/autoload.php';
