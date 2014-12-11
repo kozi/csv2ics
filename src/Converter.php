@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class Converter
+ * @package Csv2ics
+ */
+
 namespace Csv2ics;
 
 use League\Csv\Reader;

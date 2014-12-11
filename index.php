@@ -96,8 +96,8 @@ else {
         }
 
     }
-    $strReadme              = file_get_contents($strPath.'/README.md');
-    $strDetails             = file_get_contents($strPath.'/DETAILS.md');
+    $strReadme              = file_get_contents($strPath.'/docs/README.md');
+    $strDetails             = file_get_contents($strPath.'/docs/DETAILS.md');
     $arrUpload['mdReadme']  = MarkdownExtra::defaultTransform($strReadme);
     $arrUpload['mdDetails'] = MarkdownExtra::defaultTransform($strDetails);
 
