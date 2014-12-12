@@ -1,6 +1,0 @@
-Datum	Titel	Beschreibung	Ort
-12.02.15 13:45	Treffen mit Herrn K.	Wichtiges Treffen, Unterlagen nicht vergessen	Dortmund
-14.06.15	Geburtstagsparty	Party in der Hauptstadt, Verkleidungspflicht	Berlin
-23.01.15-27.01.2015	Urlaub	Malle is nur einmal im Jahr	Mallorca
-04.04.2015 12:00-16:00	Besprechung, Raum 444	Wichtige Besprechung!	
-11.11.15	Karneval		Hamburg

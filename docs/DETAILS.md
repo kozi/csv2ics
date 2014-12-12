@@ -19,9 +19,9 @@
       dem Server gespeichert. Es verbleiben also keinerlei persönliche Daten auf dem
       Server.
 * **Beispieldateien**
-     * [termine.xls](examples/termine.xls) Excel-Datei mit Beispielterminen
-     * [termine.csv](examples/termine.csv) Beispieltermine in einer CSV-Datei
-     * [termine.txt](examples/termine.txt) Tabstoppgetrennter Text mit Beispielterminen
+     * [termine.xls](docs/examples/termine.xls) Excel-Datei mit Beispielterminen
+     * [termine.csv](docs/examples/termine.csv) Beispieltermine in einer CSV-Datei
+     * [termine.txt](docs/examples/termine.txt) Tabstoppgetrennter Text mit Beispielterminen
 
 
 ### Development
