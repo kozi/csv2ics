@@ -3,7 +3,7 @@
 /**
  * csv2ics
  *
- * Copyright (c) 2014-2015 Martin Kozianka <kozianka.de>
+ * Copyright (c) 2014-2016 Martin Kozianka <kozianka.de>
  *
  * @package Csv2ics
  * @link    https://csv2ics.kozianka.de
