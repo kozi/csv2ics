@@ -9,11 +9,11 @@
         }
     ],
     "require": {
-        "league/csv": "*",
-        "league/plates": "*",
-        "michelf/php-markdown": "*",
-        "sabre/vobject": "*",
-        "codeguy/upload": "*"
+        "league/csv": "~8",
+        "league/plates": "~3",
+        "michelf/php-markdown": "~1",
+        "sabre/vobject": "~4",
+        "codeguy/upload": "~1"
 
     },
     "autoload": {
