@@ -35,14 +35,16 @@ class Converter
         $strContent    = file_get_contents($strPath);
         $strContent    = mb_convert_encoding($strContent, 'UTF-8', mb_detect_encoding($strContent));
         $csvReader     = Reader::createFromString($strContent);
-        $arrDelimiter  = $csvReader->detectDelimiterList();
-        
+        $arrDelimiter  = $csvReader->fetchDelimitersOccurrence([' ',',',';','|']);
+
         if (count($arrDelimiter) === 0)
         {
             throw new \Exception('File not compatible.');
         }
 
-        $delimiter = array_shift($arrDelimiter);
+        $arrDelimiter = array_keys($arrDelimiter);
+        $delimiter    = array_shift($arrDelimiter);
+
         $csvReader->setDelimiter($delimiter);
 
         try

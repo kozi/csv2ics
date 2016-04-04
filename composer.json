@@ -14,7 +14,6 @@
         "michelf/php-markdown": "~1",
         "sabre/vobject": "~4",
         "codeguy/upload": "~1"
-
     },
     "autoload": {
         "psr-4": {
