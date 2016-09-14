@@ -10,7 +10,7 @@
 </head>
 <body>
     <main>
-        <h1><?=$this->e($title)?></h1>
+        <h1><a href="/"><?=$this->e($title)?></a></h1>
         <?php if($errorMessage): ?>
             <div class="error"><?=$this->e($errorMessage)?></div>
         <?php endif; ?>
