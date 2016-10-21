@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <link href='http://fonts.googleapis.com/css?family=Fira+Sans:400,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Roboto+Slab:400,700">
     <link rel="stylesheet" href="assets/style.css">
     <meta charset="utf-8">
     <META NAME="ROBOTS" CONTENT="INDEX,NOFOLLOW">
