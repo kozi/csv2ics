@@ -22,9 +22,9 @@ class Converter
 
     public function __construct($strPath, $csvData = null)
     {
-        mb_internal_encoding('UTF-8');
-        mb_substitute_character('none');
-        mb_detect_order(['ASCII', 'ISO-2022-JP', 'UTF-8', 'EUC-JP', 'ISO-8859-1']);
+        mb_internal_encoding("UTF-8");
+        mb_substitute_character("none");
+        mb_detect_order(["ASCII", "ISO-2022-JP", "UTF-8", "EUC-JP", "ISO-8859-1"]);
 
         if ($strPath === null)
         {
@@ -33,13 +33,13 @@ class Converter
         }
 
         $strContent    = file_get_contents($strPath);
-        $strContent    = mb_convert_encoding($strContent, 'UTF-8', mb_detect_encoding($strContent));
+        $strContent    = mb_convert_encoding($strContent, "UTF-8", mb_detect_encoding($strContent));
         $csvReader     = Reader::createFromString($strContent);
-        $arrDelimiter  = $csvReader->fetchDelimitersOccurrence([' ',',',';','|']);
+        $arrDelimiter  = $csvReader->fetchDelimitersOccurrence(["\t"," ",",",";","|"]);
 
         if (count($arrDelimiter) === 0)
         {
-            throw new \Exception('File not compatible.');
+            throw new \Exception("File not compatible.");
         }
 
         $arrDelimiter = array_keys($arrDelimiter);
@@ -53,26 +53,27 @@ class Converter
         }
         catch(\Exception $e)
         {
-            throw new \Exception('File not compatible.');
+            throw new \Exception("File not compatible.");
         }
 
         $i       = 0;
         $csvData = [];
         foreach($data as $row)
         {
-            $row      = array_change_key_case($row, CASE_LOWER);
-            $cssClass = ($i++ %2 === 0) ? 'odd' : 'even';
-            $objRow   = (object) [
-                'cssClass'    => $cssClass,
-                'title'       => array_key_exists('titel', $row) ? trim($row['titel']) : '',
-                'date'        => array_key_exists('datum', $row) ? trim($row['datum']) : '',
-                'description' => array_key_exists('beschreibung', $row) ? trim($row['beschreibung']) : '',
-                'location'    => array_key_exists('ort', $row) ? trim($row['ort']) : ''
-            ];
 
+            $row      = array_change_key_case($row, CASE_LOWER);
+            $cssClass = ($i++ %2 === 0) ? "odd" : "even";
+            $objRow   = (object) [
+                "cssClass"    => $cssClass,
+                "title"       => array_key_exists("titel", $row) ? trim($row["titel"]) : "",
+                "date"        => array_key_exists("datum", $row) ? trim($row["datum"]) : "",
+                "description" => array_key_exists("beschreibung", $row) ? trim($row["beschreibung"]) : "",
+                "location"    => array_key_exists("ort", $row) ? trim($row["ort"]) : ""
+            ];
+            
             if (strlen($objRow->title) === 0 || strlen($objRow->date) === 0)
             {
-                $objRow->cssClass = $cssClass.'Error';
+                $objRow->cssClass = $cssClass."Error";
             }
 
             $csvData[] = $objRow;
@@ -84,7 +85,7 @@ class Converter
 
     private function addEvent($obj)
     {
-        $event = $this->calendar->createComponent('VEVENT');
+        $event = $this->calendar->createComponent("VEVENT");
 
         if (strlen($obj->title) > 0)
         {
@@ -121,47 +122,47 @@ class Converter
         { 
             $strIcsDate = $this->getIcsDate($strDate);
             $event->DTSTART          = $strIcsDate;
-            $event->DTSTART['VALUE'] = 'DATE';
+            $event->DTSTART["VALUE"] = "DATE";
             $event->DTEND            = $strIcsDate;
-            $event->DTEND['VALUE']   = 'DATE';
+            $event->DTEND["VALUE"]   = "DATE";
             return true;
         }
-        $arrDate = explode('-', $strDate);
-        $arrDate = array_map('trim', $arrDate);
+        $arrDate = explode("-", $strDate);
+        $arrDate = array_map("trim", $arrDate);
 
         if (count($arrDate) === 2 && strlen($arrDate[0]) >= 8 && strlen($arrDate[1]) >= 8)
         {
             // TT.MM.JJ-TT.MM.JJ
             // TT.MM.JJJJ-TT.MM.JJJJ
             $event->DTSTART          = $this->getIcsDate($arrDate[0]);
-            $event->DTSTART['VALUE'] = 'DATE';
+            $event->DTSTART["VALUE"] = "DATE";
 
             // Hier muss 1 Tag hinzugefügt werden sonst wird der letzte
             // Tag nicht mit eingeschlossen
-            $event->DTEND            = $this->getIcsDate($arrDate[1], '1 Day');
-            $event->DTEND['VALUE']   = 'DATE';
+            $event->DTEND            = $this->getIcsDate($arrDate[1], "1 Day");
+            $event->DTEND["VALUE"]   = "DATE";
             return true;
         }
 
-        $arrDate = explode(' ', $strDate);
+        $arrDate = explode(" ", $strDate);
 
-        if (count($arrDate) === 2 && strpos($arrDate[1], ':') !== false)
+        if (count($arrDate) === 2 && strpos($arrDate[1], ":") !== false)
         {
-            if (strpos($arrDate[1], '-') === false)
+            if (strpos($arrDate[1], "-") === false)
             {
                 // TT.MM.JJ SS:MM oder TT.MM.JJJJ SS:MM
-                $strDate        = $arrDate[0].' '.$arrDate[1];
+                $strDate        = $arrDate[0]." ".$arrDate[1];
                 $event->DTSTART = $this->getIcsDateTime($strDate);
                 $event->DTEND   = $this->getIcsDateTime($strDate);
                 return true;
             }
             else
             {
-                $arrTime = explode('-', $arrDate[1]);
-                $arrTime = array_map('trim', $arrTime);
+                $arrTime = explode("-", $arrDate[1]);
+                $arrTime = array_map("trim", $arrTime);
                 // TT.MM.JJ SS:MM-SS:MM oder TT.MM.JJJJ SS:MM-SS:MM
-                $event->DTSTART = $this->getIcsDateTime($arrDate[0].' '.$arrTime[0]);
-                $event->DTEND   = $this->getIcsDateTime($arrDate[0].' '.$arrTime[1]);
+                $event->DTSTART = $this->getIcsDateTime($arrDate[0]." ".$arrTime[0]);
+                $event->DTEND   = $this->getIcsDateTime($arrDate[0]." ".$arrTime[1]);
                 return true;
             }
         }
@@ -170,31 +171,31 @@ class Converter
 
     private function getIcsDate($strDate, $strDateInterval = false)
     {
-        $fmt = (strlen($strDate) === 8) ? 'd.m.y' : 'd.m.Y';
+        $fmt = (strlen($strDate) === 8) ? "d.m.y" : "d.m.Y";
         $dt  = \DateTime::createFromFormat($fmt, $strDate);
 
         if ($strDateInterval !== false)
         {
             $dt->add(\DateInterval::createFromDateString($strDateInterval));
         }
-        return $dt->format('Ymd');
+        return $dt->format("Ymd");
     }
 
     private function getIcsDateTime($strDate) {
-        $fmt = (strlen($strDate) === 14) ? 'd.m.y H:i' : 'd.m.Y H:i';
+        $fmt = (strlen($strDate) === 14) ? "d.m.y H:i" : "d.m.Y H:i";
         return \DateTime::createFromFormat($fmt, $strDate);
     }
 
 
     public function getIcsFile() {
         $this->calendar         = new VCalendar();
-        $this->calendar->prodid = 'csv2ics // http://csv2ics.kozianka.de';
+        $this->calendar->prodid = "csv2ics // http://csv2ics.kozianka.de";
         foreach ($this->csvData as $entry)
         {
             $this->addEvent($entry);
         }
-        header('Content-type: text/calendar');
-        header('Content-Disposition: attachment; filename="calendar.ics"');
+        header("Content-type: text/calendar");
+        header("Content-Disposition: attachment; filename=\"calendar.ics\"");
         echo $this->calendar->serialize();
         exit;
     }
