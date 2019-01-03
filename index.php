@@ -3,11 +3,11 @@
 /**
  * csv2ics
  *
- * Copyright (c) 2014-2016 Martin Kozianka <kozianka.de>
+ * Copyright (c) 2014-2019 Martin Kozianka <kozianka.de>
  *
  * @package Csv2ics
  * @link    https://csv2ics.kozianka.de
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ * @license MIT License
  */
 
 namespace Csv2ics;
@@ -22,25 +22,22 @@ date_default_timezone_set('Europe/Berlin');
 session_start();
 
 $strPath = dirname(__FILE__);
-$engine  = new Engine($strPath.'/templates');
+$engine = new Engine($strPath . '/templates');
 $engine->addData([
-    'title'        => 'csv2ics',
-    'copyright'    => 'Copyright '.(new \DateTime())->format('Y').' Martin Kozianka (kozianka.de)',
-    'errorMessage' => Manager::getErrorMessage()
+    'title' => 'csv2ics',
+    'copyright' => 'Copyright ' . (new \DateTime())->format('Y') . ' Martin Kozianka (kozianka.de)',
+    'errorMessage' => Manager::getErrorMessage(),
 ]);
 
 // Gib die ICS-Datei aus!
-if(array_key_exists('ics', $_GET))
-{
-    $csvData    = null;
+if (array_key_exists('ics', $_GET)) {
+    $csvData = null;
     $sessionKey = $_GET['ics'];
-    if (array_key_exists($sessionKey, $_SESSION))
-    {
+    if (array_key_exists($sessionKey, $_SESSION)) {
         $csvData = $_SESSION[$sessionKey];
     }
 
-    if ($csvData === null)
-    {
+    if ($csvData === null) {
         Manager::handleError('CSV data not found.');
     }
 
@@ -50,30 +47,24 @@ if(array_key_exists('ics', $_GET))
     session_destroy();
 
     $objConverter->getIcsFile($csvData);
-}
-elseif(array_key_exists('result', $_GET))
-{
+} elseif (array_key_exists('result', $_GET)) {
     $strFilename = null;
-    $fileKey     = $_GET['result'];
+    $fileKey = $_GET['result'];
 
     // Die hochgeladene Datei verarbeiten
-    if (array_key_exists($fileKey, $_SESSION))
-    {
-        $strFilename   = $_SESSION[$fileKey];
+    if (array_key_exists($fileKey, $_SESSION)) {
+        $strFilename = $_SESSION[$fileKey];
     }
-    $strPath = Manager::getPath().'/'.$strFilename;
+    $strPath = Manager::getPath() . '/' . $strFilename;
 
-    if (!file_exists($strPath) || $strFilename === null)
-    {
+    if (!file_exists($strPath) || $strFilename === null) {
         Manager::handleError('File not found.');
     }
 
     try
     {
         $objConverter = new Converter($strPath);
-    }
-    catch(\Exception $e)
-    {
+    } catch (\Exception $e) {
         // Datei löschen
         unlink($strPath);
         Manager::handleError($e->getMessage());
@@ -83,40 +74,34 @@ elseif(array_key_exists('result', $_GET))
     unlink($strPath);
     unset($_SESSION[$fileKey]);
 
-    $icsKey            = 'csv2ics'.uniqid();
+    $icsKey = 'csv2ics' . uniqid();
     $_SESSION[$icsKey] = $objConverter->csvData;
 
-    $arrConvert   = ['icsKey'  => $icsKey, 'csvData' => $objConverter->csvData];
+    $arrConvert = ['icsKey' => $icsKey, 'csvData' => $objConverter->csvData];
 
     echo $engine->render('result', $arrConvert);
-}
-else
-{
+} else {
     $arrUpload = [];
 
     // Wurde das Formular abgesendet?
-    if(array_key_exists('upload', $_GET))
-    {
+    if (array_key_exists('upload', $_GET)) {
         $arrUpload = Manager::handleUpload();
 
         // Gab es Fehler im Formular?
-        if ($arrUpload['uploadError'] === null)
-        {
-            $key            = 'csv2ics'.uniqid();
+        if ($arrUpload['uploadError'] === null) {
+            $key = 'csv2ics' . uniqid();
             $_SESSION[$key] = $arrUpload['name'];
-            header("Location: ?result=".$key);
+            header("Location: ?result=" . $key);
             exit;
-        }
-        else
-        {
+        } else {
             Manager::handleError($arrUpload['uploadError']);
         }
 
     }
-    
-    $strReadme              = file_get_contents($strPath.'/docs/README.md');
-    $strDetails             = file_get_contents($strPath.'/docs/DETAILS.md');
-    $arrUpload['mdReadme']  = MarkdownExtra::defaultTransform($strReadme);
+
+    $strReadme = file_get_contents($strPath . '/docs/README.md');
+    $strDetails = file_get_contents($strPath . '/docs/DETAILS.md');
+    $arrUpload['mdReadme'] = MarkdownExtra::defaultTransform($strReadme);
     $arrUpload['mdDetails'] = MarkdownExtra::defaultTransform($strDetails);
 
     echo $engine->render('upload', $arrUpload);

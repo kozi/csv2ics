@@ -1,15 +1,13 @@
 {
     "name": "martin-kozianka/csv2ics",
     "description": "Csv2ics - convert csv files to ics files",
-    "license": "LGPL-3.0+",    
-    "authors": [
-        {
-            "name": "Martin Kozianka",
-            "homepage": "http://kozianka.de"            
-        }
-    ],
+    "license": "MIT License",
+    "authors": [{
+        "name": "Martin Kozianka",
+        "homepage": "http://kozianka.de"
+    }],
     "require": {
-        "league/csv": "~8",
+        "league/csv": "~9",
         "league/plates": "~3",
         "michelf/php-markdown": "~1",
         "sabre/vobject": "~4",
