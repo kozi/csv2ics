@@ -25,7 +25,7 @@ $strPath = dirname(__FILE__);
 $engine = new Engine($strPath . '/templates');
 $engine->addData([
     'title' => 'csv2ics',
-    'copyright' => 'Copyright ' . (new \DateTime())->format('Y') . ' Martin Kozianka (kozianka.de)',
+    'copyright' => 'Copyright 2014-' . (new \DateTime())->format('Y') . ' Martin Kozianka (kozianka.de)',
     'errorMessage' => Manager::getErrorMessage(),
 ]);
 
