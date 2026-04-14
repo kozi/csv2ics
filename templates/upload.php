@@ -1,5 +1,3 @@
-<?php $this->layout('layout'); ?>
-
 <div class="mdReadme">
     <?php echo $mdReadme; ?>
 </div>

@@ -12,11 +12,17 @@
 
 namespace Csv2ics;
 
-use Upload\File;
-use Upload\Storage\FileSystem;
-
 class Manager
 {
+    private const MAX_UPLOAD_SIZE = 2097152;
+
+    private const ALLOWED_MIME_TYPES = [
+        'text/plain',
+        'text/csv',
+        'application/csv',
+        'application/vnd.ms-excel',
+    ];
+
     public static function getPath()
     {
         $dirname = dirname(__FILE__);
@@ -26,40 +32,122 @@ class Manager
 
     public static function handleUpload()
     {
-        $path = static::getPath();
-        $storage = new FileSystem($path);
-        $filename = uniqid('fn', true);
-
-        try {
-            $file = new File('file', $storage);
-        } catch (\Exception $e) {
-            static::handleError($e->getMessage());
-        }
-
-        $file->setName($filename);
-        $file->addValidations([
-            new \Upload\Validation\Mimetype('text/plain'),
-            new \Upload\Validation\Size('2M'),
-        ]);
-
         $data = [
-            'name' => $file->getNameWithExtension(),
-            'extension' => $file->getExtension(),
-            'mime' => $file->getMimetype(),
-            'size' => $file->getSize(),
-            'md5' => $file->getMd5(),
+            'name' => null,
+            'extension' => null,
+            'mime' => null,
+            'size' => null,
+            'md5' => null,
             'uploadError' => null,
         ];
 
-        try
-        {
-            // Success!
-            $file->upload();
-        } catch (\Exception $e) {
-            // Fail!
-            $data['uploadError'] = implode(', ', $file->getErrors());
+        if (!array_key_exists('file', $_FILES) || !is_array($_FILES['file'])) {
+            $data['uploadError'] = 'No file uploaded.';
+            return $data;
         }
+
+        $uploadedFile = $_FILES['file'];
+        $uploadError = (int) ($uploadedFile['error'] ?? UPLOAD_ERR_NO_FILE);
+
+        if ($uploadError !== UPLOAD_ERR_OK) {
+            $data['uploadError'] = static::getUploadErrorMessage($uploadError);
+            return $data;
+        }
+
+        $tmpName = (string) ($uploadedFile['tmp_name'] ?? '');
+        if ($tmpName === '' || !is_uploaded_file($tmpName)) {
+            $data['uploadError'] = 'Upload validation failed.';
+            return $data;
+        }
+
+        $size = (int) ($uploadedFile['size'] ?? 0);
+        if ($size > static::MAX_UPLOAD_SIZE) {
+            $data['uploadError'] = 'File is too large.';
+            return $data;
+        }
+
+        $mime = static::detectMimeType($tmpName);
+        if ($mime === null || !in_array($mime, static::ALLOWED_MIME_TYPES, true)) {
+            $data['uploadError'] = 'Unsupported file type.';
+            return $data;
+        }
+
+        $path = static::getPath();
+        if (!is_dir($path) && !mkdir($path, 0777, true) && !is_dir($path)) {
+            $data['uploadError'] = 'Upload directory could not be created.';
+            return $data;
+        }
+
+        $extension = static::resolveExtension((string) ($uploadedFile['name'] ?? ''), $mime);
+        $filename = uniqid('fn', true);
+        $targetName = $filename . ($extension !== '' ? '.' . $extension : '');
+        $targetPath = $path . '/' . $targetName;
+
+        if (!move_uploaded_file($tmpName, $targetPath)) {
+            $data['uploadError'] = 'Uploaded file could not be saved.';
+            return $data;
+        }
+
+        $data['name'] = $targetName;
+        $data['extension'] = $extension;
+        $data['mime'] = $mime;
+        $data['size'] = filesize($targetPath) ?: $size;
+        $data['md5'] = md5_file($targetPath) ?: null;
+
         return $data;
+    }
+
+    private static function getUploadErrorMessage($uploadError)
+    {
+        switch ($uploadError) {
+            case UPLOAD_ERR_INI_SIZE:
+            case UPLOAD_ERR_FORM_SIZE:
+                return 'File is too large.';
+            case UPLOAD_ERR_PARTIAL:
+                return 'Upload was interrupted.';
+            case UPLOAD_ERR_NO_FILE:
+                return 'No file uploaded.';
+            case UPLOAD_ERR_NO_TMP_DIR:
+                return 'Temporary upload directory is missing.';
+            case UPLOAD_ERR_CANT_WRITE:
+                return 'Uploaded file could not be written.';
+            case UPLOAD_ERR_EXTENSION:
+                return 'Upload was blocked by a PHP extension.';
+            default:
+                return 'Unknown upload error.';
+        }
+    }
+
+    private static function detectMimeType($path)
+    {
+        if (!function_exists('finfo_open')) {
+            return null;
+        }
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo === false) {
+            return null;
+        }
+
+        $mime = finfo_file($finfo, $path);
+        finfo_close($finfo);
+
+        return is_string($mime) ? $mime : null;
+    }
+
+    private static function resolveExtension($originalName, $mime)
+    {
+        $extension = strtolower(trim(pathinfo($originalName, PATHINFO_EXTENSION)));
+
+        if ($extension !== '') {
+            return preg_replace('/[^a-z0-9]+/', '', $extension);
+        }
+
+        if ($mime === 'text/csv' || $mime === 'application/csv') {
+            return 'csv';
+        }
+
+        return 'txt';
     }
 
     public static function getErrorMessage()

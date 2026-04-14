@@ -17,4 +17,3 @@ contao/**/bower.json
 # dependencies
 build
 vendor
-composer.lock

@@ -14,20 +14,44 @@ namespace Csv2ics;
 
 require 'vendor/autoload.php';
 
-use League\Plates\Engine;
-use Michelf\MarkdownExtra;
+use League\CommonMark\CommonMarkConverter;
+
+function escape($value)
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+
+function renderPartial($templatePath, array $data = [])
+{
+    extract($data, EXTR_SKIP);
+
+    ob_start();
+    require $templatePath;
+
+    return ob_get_clean();
+}
+
+function renderTemplate($templatePath, array $data = [], array $layoutData = [])
+{
+    $content = renderPartial($templatePath, $data);
+
+    return renderPartial(dirname($templatePath) . '/layout.php', array_merge($layoutData, [
+        'content' => $content,
+    ]));
+}
 
 date_default_timezone_set('Europe/Berlin');
 
 session_start();
 
 $strPath = dirname(__FILE__);
-$engine = new Engine($strPath . '/templates');
-$engine->addData([
+$templatePath = $strPath . '/templates';
+$markdownConverter = new CommonMarkConverter();
+$layoutData = [
     'title' => 'csv2ics',
     'copyright' => 'Copyright 2014-' . (new \DateTime())->format('Y') . ' Martin Kozianka (kozianka.de)',
     'errorMessage' => Manager::getErrorMessage(),
-]);
+];
 
 // Gib die ICS-Datei aus!
 if (array_key_exists('ics', $_GET)) {
@@ -79,7 +103,7 @@ if (array_key_exists('ics', $_GET)) {
 
     $arrConvert = ['icsKey' => $icsKey, 'csvData' => $objConverter->csvData];
 
-    echo $engine->render('result', $arrConvert);
+    echo renderTemplate($templatePath . '/result.php', $arrConvert, $layoutData);
 } else {
     $arrUpload = [];
 
@@ -101,8 +125,8 @@ if (array_key_exists('ics', $_GET)) {
 
     $strReadme = file_get_contents($strPath . '/docs/README.md');
     $strDetails = file_get_contents($strPath . '/docs/DETAILS.md');
-    $arrUpload['mdReadme'] = MarkdownExtra::defaultTransform($strReadme);
-    $arrUpload['mdDetails'] = MarkdownExtra::defaultTransform($strDetails);
+    $arrUpload['mdReadme'] = $markdownConverter->convert($strReadme)->getContent();
+    $arrUpload['mdDetails'] = $markdownConverter->convert($strDetails)->getContent();
 
-    echo $engine->render('upload', $arrUpload);
+    echo renderTemplate($templatePath . '/upload.php', $arrUpload, $layoutData);
 }

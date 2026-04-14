@@ -1,4 +1,3 @@
-<?php $this->layout('layout'); ?>
 <h3>Ergebnis</h3>
 
 <p>

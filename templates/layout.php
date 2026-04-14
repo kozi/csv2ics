@@ -6,18 +6,18 @@
     <link rel="stylesheet" href="assets/style.css">
     <meta charset="utf-8">
     <META NAME="ROBOTS" CONTENT="INDEX,NOFOLLOW">
-    <title><?=$this->e($title)?></title>
+    <title><?=escape($title)?></title>
 </head>
 <body>
     <main>
-        <h1><a href="/"><?=$this->e($title)?></a></h1>
-        <?php if($errorMessage): ?>
-            <div class="error"><?=$this->e($errorMessage)?></div>
+        <h1><a href="/"><?=escape($title)?></a></h1>
+        <?php if ($errorMessage): ?>
+            <div class="error"><?=escape($errorMessage)?></div>
         <?php endif; ?>
-        <?=$this->section('content')?>
+        <?=$content?>
     </main>
     <footer>
-        <h1><?=$this->e($copyright)?></h1>
+        <h1><?=escape($copyright)?></h1>
     </footer>
     
     <script>

@@ -10,8 +10,8 @@
   * **Ort**: Wo findet der Termin statt?
 * **Datum**
   * Termin an einem bestimmten Tag: **TT.MM.JJJJ**
-  * Termin mit Uhrzeit: **TT.MM.JJJJ SS:MM** 
-  * Termin mit festgelegter Dauer: **TT.MM.JJJJ SS:MM-SS:MM** 
+  * Termin mit Uhrzeit: **TT.MM.JJJJ SS:MM**
+  * Termin mit festgelegter Dauer: **TT.MM.JJJJ SS:MM-SS:MM**
   * Termin über mehrere Tage: **TT.MM.JJJJ-TT.MM.JJJJ**
   * Die Jahresangabe kann auch 2-stellig erfolgen **JJ** statt **JJJJ**
 * **Info**: Die hochgeladenen Dateien werden sofort nach der Konvertierung gelöscht.
@@ -29,6 +29,5 @@
 * Für die Realisierung habe ich folgende Pakete verwendet:
   * sabre/vobject <http://sabre.io/vobject/>
   * league/csv <http://csv.thephpleague.com/>
-  * league/plates <http://platesphp.com/>
-  * michelf/php-markdown <https://michelf.ca/projects/php-markdown/>
-  * codeguy/upload <https://github.com/codeguy/Upload>
+  * league/commonmark <https://commonmark.thephpleague.com/>
+* Die Templates werden mit nativen PHP-Includes gerendert.
