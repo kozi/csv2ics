@@ -12,7 +12,7 @@
 
 namespace Csv2ics;
 
-use function League\Csv\delimiter_detect;
+use League\Csv\Info;
 use League\Csv\Reader;
 use Sabre\VObject\Component\VCalendar;
 
@@ -34,8 +34,8 @@ class Converter
 
         $strContent = file_get_contents($strPath);
         $strContent = mb_convert_encoding($strContent, "UTF-8", mb_detect_encoding($strContent));
-        $csvReader = Reader::createFromString($strContent);
-        $arrDelimiter = delimiter_detect($csvReader, ["\t", ",", ";", "|"], 10);
+        $csvReader = Reader::fromString($strContent);
+        $arrDelimiter = Info::getDelimiterStats($csvReader, ["\t", ",", ";", "|"], 10);
 
         if (count($arrDelimiter) === 0) {
             throw new \Exception("File not compatible.");

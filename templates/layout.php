@@ -1,4 +1,10 @@
-<?php header("Content-Type: text/html; charset=utf-8"); ?>
+<?php
+
+use function Csv2ics\escape;
+header("Content-Type: text/html; charset=utf-8");
+
+?>
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
