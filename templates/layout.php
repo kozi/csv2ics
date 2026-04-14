@@ -8,7 +8,6 @@ header("Content-Type: text/html; charset=utf-8");
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Roboto+Slab:400,700">
     <link rel="stylesheet" href="assets/style.css">
     <meta charset="utf-8">
     <META NAME="ROBOTS" CONTENT="INDEX,NOFOLLOW">
