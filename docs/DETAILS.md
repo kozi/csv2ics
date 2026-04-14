@@ -27,7 +27,6 @@
 
 * Den Quellcode findet ihr hier: <https://github.com/kozi/csv2ics>
 * Für die Realisierung habe ich folgende Pakete verwendet:
-  * sabre/vobject <http://sabre.io/vobject/>
-  * league/csv <http://csv.thephpleague.com/>
-  * league/commonmark <https://commonmark.thephpleague.com/>
-* Die Templates werden mit nativen PHP-Includes gerendert.
+  * `sabre/vobject` <http://sabre.io/vobject/>
+  * `league/csv` <http://csv.thephpleague.com/>
+  * `league/commonmark` <https://commonmark.thephpleague.com/>
